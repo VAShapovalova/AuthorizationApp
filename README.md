@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/Mikhail1488/AppCLI.svg?branch=master)](https://travis-ci.org/Mikhail1488/AppCLI)
-## [AppCli](https://mikhail1488.github.io/AppCLI/)
+[![Build Status](https://travis-ci.org/VAShapovalova/AuthorizationApp.svg?branch=master)](https://travis-ci.org/VAShapovalova/AuthorizationApp)
+## [AppCli](https://vashapovalova.github.io/AuthorizationApp/)
 Учебный проект, созданный с целью изучения backend-разработки в рамках курса "Программная инженерия".
 Приложение представляет собой консольную утилиту, выполняющую аутентификацию, авторизацию и аккаунтинг.
 На вход программа принимает следующие параметры: 
