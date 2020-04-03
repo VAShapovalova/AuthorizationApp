@@ -1,12 +1,16 @@
+import dao.UserDAO
 import enum.ExitCode.SUCCESS
 import mock.ResoursesMock
 import mock.SessionMock
-import mock.UsersMock
 import services.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
-    val authenticationService = AuthenticationService(UsersMock().users)
+    val dbService = DBService()
+
+    val authenticationService = AuthenticationService(
+            UserDAO(dbService.connection)
+    )
     val authorizationService = AuthorizationService(ResoursesMock().resources)
     val accountingService = AccountingService(SessionMock.session)
     val businessLogic = BusinessLogic(authenticationService, authorizationService, accountingService)
@@ -20,8 +24,16 @@ fun main(args: Array<String>) {
         status = businessLogic.authorization(cmd.login!!, cmd.role!!, cmd.resource!!)
     }
     if (status == SUCCESS && cmdServise.isAccountingNeeded()) {
-        status = businessLogic.accounting(cmd.login!!, cmd.resource!!, cmd.role!!, cmd.dateStart!!, cmd.dateEnd!!, cmd.volume!!)
+        status = businessLogic.accounting(
+                cmd.login!!,
+                cmd.resource!!,
+                cmd.role!!,
+                cmd.dateStart!!,
+                cmd.dateEnd!!,
+                cmd.volume!!
+        )
     }
+
+    dbService.connection.close()
     exitProcess(status.codeNumber)
 }
-
