@@ -2,3 +2,6 @@
 .idea
 .github
 .DS_Store
+.db/AuthorizationApp.*
+.out
+
