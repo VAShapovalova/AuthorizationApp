@@ -10,7 +10,7 @@ class ResoursesMock {
         Resources("A", Roles.EXECUTE.roleName, "admin"),
         Resources("A", Roles.READ.roleName, "admin"),
         Resources("A", Roles.WRITE.roleName, "admin"),
-        Resources("A", Roles.READ.roleName, "admin"),
+        Resources("A.B", Roles.READ.roleName, "admin"),
         Resources("A", Roles.EXECUTE.roleName, "q"),
         Resources("A", Roles.EXECUTE.roleName, "vasya")
     )
