@@ -1,27 +1,31 @@
 package dao
 
 import domain.User
-import java.sql.Connection
+import services.DBService
 
-class UserDAO(private val dbConnection: Connection) {
+class UserDAO(private val db: DBService) {
+    private val loginColumn = "LOGIN"
+    private val hashColumn = "HASH_PASSWORD"
+    private val saltColumn = "SALT"
+
+    private val userByLoginSql = "SELECT * FROM USER WHERE LOGIN=?;"
+
     fun getUserByLogin(login: String): User? {
-        val sql = """
-            SELECT *
-            FROM USER
-            WHERE LOGIN=?;
-            """
+        return db.inConnect {
 
-        val statement = dbConnection.prepareStatement(sql)
-        statement.setString(1, login)
-        val value = statement.executeQuery()
+            val statement = it.prepareStatement(userByLoginSql)
+            statement.setString(1, login)
 
-        return when {
-            value.next() -> User(
-                    value.getString("LOGIN"),
-                    value.getString("HASH_PASSWORD"),
-                    value.getString("SALT")
-            )
-            else -> null
+            val value = statement.executeQuery()
+
+            when {
+                value.next() -> User(
+                        value.getString(loginColumn),
+                        value.getString(hashColumn),
+                        value.getString(saltColumn)
+                )
+                else -> null
+            }
         }
     }
 }
