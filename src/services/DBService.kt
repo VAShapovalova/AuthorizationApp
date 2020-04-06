@@ -5,9 +5,9 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 class DBService() {
-    val envUrl: String = System.getenv("DBURL")
-    val envLogin: String = System.getenv("DBLOGIN")
-    val envPass: String = System.getenv("DBPASS")
+    val envUrl: String = System.getenv("DBURL") ?: "jdbc:h2:./db/AuthorizationApp"
+    val envLogin: String = System.getenv("DBLOGIN") ?: "sa"
+    val envPass: String = System.getenv("DBPASS") ?: ""
     val migrationPath: String = "filesystem:db"
     var connection: Connection? = null
 

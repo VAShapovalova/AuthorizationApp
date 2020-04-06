@@ -33,17 +33,12 @@ class BusinessLogic(
 
     fun authorization(login: String, role: String, resource: String): ExitCode {
         val isRoleExist = findRoles(role)
-        val isChildAccessExist: Boolean
-        var isParentAccessExist = false
+        val isAccessExist: Boolean
         if (isRoleExist) {
-            isChildAccessExist = authorizationService.checkResourceAccess(login, resource, role)
+            isAccessExist = authorizationService.checkResourceAccess(login, resource, role)
         } else {
             return UNKNOWN_ROLE
         }
-        if (!isChildAccessExist) {
-            isParentAccessExist = authorizationService.isParentHaveAccess(resource, login, role)
-        }
-        val isAccessExist = isChildAccessExist || isParentAccessExist
         return if (isAccessExist) {
             SUCCESS
         } else {
