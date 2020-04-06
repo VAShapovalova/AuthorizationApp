@@ -1,24 +1,22 @@
-import dao.AccessResourceDAO
 import dao.UserDAO
 import enum.ExitCode.SUCCESS
+import mock.ResoursesMock
 import mock.SessionMock
 import services.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
-    println(args.joinToString(", "))
     val cmdServise = CmdServise(args)
     val cmd = cmdServise.parse()
     var status = SUCCESS
     val dbService = DBService()
-
+    dbService.migrate()
+    dbService.connect()
     if (dbService.connection != null) {
         val authenticationService = AuthenticationService(
-                UserDAO(dbService)
+                UserDAO(dbService.connection!!)
         )
-        val authorizationService = AuthorizationService(
-                AccessResourceDAO(dbService)
-        )
+        val authorizationService = AuthorizationService(ResoursesMock().resources)
         val accountingService = AccountingService(SessionMock.session)
         val businessLogic = BusinessLogic(authenticationService, authorizationService, accountingService)
 
