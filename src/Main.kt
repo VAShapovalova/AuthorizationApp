@@ -12,8 +12,8 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         logger.info { "Инициализация: ${args.joinToString(" ")}" }
-        val cmdServise = CmdServise(args)
-        val cmd = cmdServise.parse()
+        val cmdService = CmdService(args)
+        val cmd = cmdService.parse()
         var status = SUCCESS
         val dbService = DBService(logger)
         dbService.migrate()
