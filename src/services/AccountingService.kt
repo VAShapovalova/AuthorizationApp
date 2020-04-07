@@ -1,13 +1,16 @@
 package services
 
+import dao.SessionDAO
+import dao.models.Access
 import domain.Session
-import enum.Roles
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 
-class AccountingService(private val sessions: MutableList<Session>) {
+class AccountingService(
+        private val dao: SessionDAO
+) {
     fun parseDate(dateString: String): LocalDate? {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val date: LocalDate?
@@ -22,13 +25,9 @@ class AccountingService(private val sessions: MutableList<Session>) {
     fun validateVolume(volume: String) = volume.toIntOrNull() != null
 
     fun addNewSession(
-            user: String,
-            res: String,
-            role: Roles,
-            ds: String,
-            de: String,
-            vol: Int
+            access: Access,
+            session: Session
     ) {
-        sessions += Session(user, role, res, ds, de, vol)
+        dao.insert(access, session)
     }
 }

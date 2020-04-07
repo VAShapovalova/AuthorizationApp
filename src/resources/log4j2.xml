@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="AuthorizationApp" status="WARN">
+    <Appenders>
+        <Console name="Console">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</Pattern>
+            </PatternLayout>
+        </Console>
+        <File name="File" fileName="aaa.log">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="TRACE">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>
