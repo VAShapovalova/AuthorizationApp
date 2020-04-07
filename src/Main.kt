@@ -1,7 +1,7 @@
 import dao.AccessDAO
+import dao.SessionDAO
 import dao.UserDAO
 import enum.ExitCode.SUCCESS
-import mock.SessionMock
 import org.apache.logging.log4j.kotlin.logger
 import services.*
 import kotlin.system.exitProcess
@@ -18,17 +18,27 @@ object Main {
         val dbService = DBService(logger)
         dbService.migrate()
         dbService.connect()
+        val connection = dbService.connection
 
-        if (dbService.connection != null) {
+        if (connection != null) {
 
             val authenticationService = AuthenticationService(
-                    UserDAO(dbService.connection!!)
+                    UserDAO(connection)
             )
-            val authorizationService = AuthorizationService(AccessDAO(dbService.connection!!))
-            val accountingService = AccountingService(SessionMock.session)
-            val businessLogic = BusinessLogic(authenticationService, authorizationService, accountingService, logger)
+            val authorizationService = AuthorizationService(
+                    AccessDAO(connection)
+            )
+            val accountingService = AccountingService(
+                    SessionDAO(connection)
+            )
+            val businessLogic = BusinessLogic(
+                    authenticationService,
+                    authorizationService,
+                    accountingService,
+                    logger
+            )
 
-            if (cmdServise.isAuthenticationNeeded()) {
+            if (cmdService.isAuthenticationNeeded()) {
                 logger.info {
                     "Попытка аутентифиции пользователя: " +
                             "${cmd.login!!} с паролем ${cmd.password!!}"
@@ -39,7 +49,7 @@ object Main {
                     "Результат шага: ${status.name}"
                 }
             }
-            if (status == SUCCESS && cmdServise.isAuthorizationNeeded()) {
+            if (status == SUCCESS && cmdService.isAuthorizationNeeded()) {
                 logger.info {
                     "Попытка авторизации пользователя к ресурсу: " +
                             "${cmd.resource!!} c ролью - ${cmd.role!!}"
@@ -51,7 +61,7 @@ object Main {
                     "Результат шага: ${status.name}"
                 }
             }
-            if (status == SUCCESS && cmdServise.isAccountingNeeded()) {
+            if (status == SUCCESS && cmdService.isAccountingNeeded()) {
                 logger.info {
                     "Попытка аккаунтинга: к ресурсу ${cmd.dateStart!!} - ${cmd.dateEnd!!}, " +
                             "потребляемый объем ${cmd.volume!!}"
@@ -69,15 +79,13 @@ object Main {
                     "Результат шага: ${status.name}"
                 }
             }
-
-            logger.info {
-                "Завершение программы с кодом: ${status.codeNumber}" +
-                        "\n---------"
-            }
-
         }
 
         dbService.disconnect()
+        logger.info {
+            "Завершение программы с кодом: ${status.codeNumber}" +
+                    "\n---------"
+        }
         exitProcess(status.codeNumber)
-    }   
+    }
 }
