@@ -1,5 +1,9 @@
 language: java
 compiler: kotlinc
 install: sudo snap install --classic kotlin
+env:
+  - DBURL=jdbc:h2:./db/AuthorizationApp
+  - DBLOGIN=sa
+  - DBPASS=
 script: ./build.sh
 after_success: ./tests.sh
