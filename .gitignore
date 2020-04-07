@@ -2,8 +2,9 @@
 .idea
 .github
 .DS_Store
+.db/AuthorizationApp.*
+.out
 ._*
-out/
 lib
 .idea_modules/
 

@@ -5,17 +5,17 @@ import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 
 
-class CmdServise(args: Array<String>) {
+class CmdService(args: Array<String>) {
 
     private val parser = ArgParser("AppCli.jar", true)
     private val login by parser.option(
-        ArgType.String,
-        "login",
-        "log",
-        "Логин пользователя, строка, длина не больше 10 символов строчными буквами"
+            ArgType.String,
+            "login",
+            "log",
+            "Логин пользователя, строка, длина не больше 10 символов строчными буквами"
     )
     private val pass by parser.option(
-        ArgType.String,
+            ArgType.String,
         "password",
         "pass",
         "Пароль, строка любой длины и любого содержания"

@@ -1,5 +1,6 @@
 package services
 
+import domain.Session
 import enum.ExitCode
 import enum.ExitCode.*
 import enum.Roles
@@ -44,18 +45,13 @@ class BusinessLogic(
     fun authorization(login: String, role: String, resource: String): ExitCode {
         val isRoleExist = findRoles(role)
         logger.info { "Результат валидации роли: $isRoleExist" }
-        val isChildAccessExist: Boolean
-        var isParentAccessExist = false
+        val isAccessExist: Boolean
         if (isRoleExist) {
-            isChildAccessExist = authorizationService.checkResourceAccess(login, resource, role)
+            isAccessExist = authorizationService.checkResourceAccess(login, resource, role)
         } else {
             logger.error { "Не известная роль" }
             return UNKNOWN_ROLE
         }
-        if (!isChildAccessExist) {
-            isParentAccessExist = authorizationService.isParentHaveAccess(resource, login, role)
-        }
-        val isAccessExist = isChildAccessExist || isParentAccessExist
         logger.info { "Результат верификации доступа к ресурсу: $isAccessExist" }
         return if (isAccessExist) {
             SUCCESS
@@ -72,8 +68,10 @@ class BusinessLogic(
         logger.info { "Результат валидации даты начала и конца: $isDateValided" }
         val isVolumeValided = accountingService.validateVolume(vol)
         logger.info { "Результат валидации объема: $isVolumeValided" }
-        return if (isDateValided && isVolumeValided) {
-            accountingService.addNewSession(login, resource, Roles.valueOf(role), ds, de, vol.toInt())
+        val access = authorizationService.getResourceAccess(login, resource, role)
+        return if (isDateValided && isVolumeValided && access != null) {
+            val session = Session(login, Roles.valueOf(role), resource, ds, de, vol.toInt())
+            accountingService.addNewSession(access, session)
             SUCCESS
         } else {
             logger.error { "Неверная активность" }
