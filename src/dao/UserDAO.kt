@@ -17,9 +17,9 @@ class UserDAO(private val dbConnection: Connection) {
 
         return when {
             value.next() -> User(
-                    value.getString("LOGIN"),
-                    value.getString("HASH_PASSWORD"),
-                    value.getString("SALT")
+                    login = value.getString("LOGIN"),
+                    hash = value.getString("HASH_PASSWORD"),
+                    salt = value.getString("SALT")
             )
             else -> null
         }
