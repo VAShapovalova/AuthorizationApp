@@ -16,7 +16,7 @@ class AccessDAO(private val dbConnection: Connection) {
                 ON USER_RESOURCE.RESOURCE_ID=RESOURCE.ID
             LEFT JOIN ROLE 
                 ON USER_RESOURCE.ROLE_ID=ROLE.ID
-            WHERE USER.LOGIN=? AND RESOURCE.PATH=? AND ROLE.ROLE_NAME=?;
+            WHERE USER.LOGIN=? AND RESOURCE.PATH=SUBSTRING(?,1,LENGTH(RESOURCE.PATH)) AND ROLE.ROLE_NAME=?;
             """
 
         val statement = dbConnection.prepareStatement(sql)
