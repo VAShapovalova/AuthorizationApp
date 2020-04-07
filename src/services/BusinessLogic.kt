@@ -68,7 +68,7 @@ class BusinessLogic(
         logger.info { "Результат валидации даты начала и конца: $isDateValided" }
         val isVolumeValided = accountingService.validateVolume(vol)
         logger.info { "Результат валидации объема: $isVolumeValided" }
-        val access = authorizationService.access
+        val access = authorizationService.getResourceAccess(login, resource, role)
         return if (isDateValided && isVolumeValided && access != null) {
             val session = Session(login, Roles.valueOf(role), resource, ds, de, vol.toInt())
             accountingService.addNewSession(access, session)

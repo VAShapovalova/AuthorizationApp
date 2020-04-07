@@ -3,10 +3,12 @@ package services
 import dao.AccessDAO
 import dao.models.Access
 
-class AuthorizationService(private val AccessDAO: AccessDAO) {
-    var access: Access? = null
+class AuthorizationService(private val accessDAO: AccessDAO) {
+    fun getResourceAccess(login: String, resource: String, role: String): Access? {
+        return accessDAO.requestAccessByResource(login, "$resource.", role)
+    }
+
     fun checkResourceAccess(login: String, resource: String, role: String): Boolean {
-        access = AccessDAO.getAccessByResource(login, "$resource.", role)
-        return access != null
+        return getResourceAccess(login, "$resource.", role) != null
     }
 }

@@ -5,7 +5,7 @@ import java.sql.Connection
 
 class AccessDAO(private val dbConnection: Connection) {
 
-    fun getAccessByResource(login: String, resource: String, role: String): Access? {
+    fun requestAccessByResource(login: String, resource: String, role: String): Access? {
         val sql = """
             SELECT USER.LOGIN, RESOURCE.PATH, ROLE.ROLE_NAME, 
             USER_RESOURCE.ID, USER_RESOURCE.USER_ID, USER_RESOURCE.RESOURCE_ID, USER_RESOURCE.ROLE_ID 
