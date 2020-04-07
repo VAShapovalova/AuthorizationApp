@@ -2,29 +2,31 @@ import dao.AccessDAO
 import dao.UserDAO
 import enum.ExitCode.SUCCESS
 import mock.SessionMock
+import org.apache.logging.log4j.kotlin.logger
 import services.*
 import kotlin.system.exitProcess
-import org.apache.logging.log4j.kotlin.logger
 
 object Main {
     private val logger = logger()
 
     @JvmStatic
     fun main(args: Array<String>) {
+        logger.info { "Инициализация: ${args.joinToString(" ")}" }
         val cmdServise = CmdServise(args)
         val cmd = cmdServise.parse()
         var status = SUCCESS
-        val dbService = DBService()
+        val dbService = DBService(logger)
         dbService.migrate()
         dbService.connect()
+
         if (dbService.connection != null) {
-             logger.info { "Инициализация: ${args.joinToString(" ")}" }
+
             val authenticationService = AuthenticationService(
                     UserDAO(dbService.connection!!)
             )
             val authorizationService = AuthorizationService(AccessDAO(dbService.connection!!))
             val accountingService = AccountingService(SessionMock.session)
-            val businessLogic = BusinessLogic(authenticationService, authorizationService, accountingService)
+            val businessLogic = BusinessLogic(authenticationService, authorizationService, accountingService, logger)
 
             if (cmdServise.isAuthenticationNeeded()) {
                 logger.info {
