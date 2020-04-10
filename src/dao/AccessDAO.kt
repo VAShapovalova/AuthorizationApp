@@ -7,16 +7,14 @@ class AccessDAO(private val dbConnection: Connection) {
 
     fun requestAccessByResource(login: String, resource: String, role: String): Access? {
         val sql = """
-            SELECT USER.LOGIN, RESOURCE.PATH, ROLE.ROLE_NAME, 
-            USER_RESOURCE.ID, USER_RESOURCE.USER_ID, USER_RESOURCE.RESOURCE_ID, USER_RESOURCE.ROLE_ID 
+            SELECT USER_RESOURCE.USER_ID, USER_RESOURCE.RESOURCE, USER_RESOURCE.ROLE, USER_RESOURCE.ID
             FROM USER_RESOURCE 
             LEFT JOIN USER 
                 ON USER_RESOURCE.USER_ID=USER.ID  
-            LEFT JOIN RESOURCE 
-                ON USER_RESOURCE.RESOURCE_ID=RESOURCE.ID
-            LEFT JOIN ROLE 
-                ON USER_RESOURCE.ROLE_ID=ROLE.ID
-            WHERE USER.LOGIN=? AND RESOURCE.PATH=SUBSTRING(?,1,LENGTH(RESOURCE.PATH)) AND ROLE.ROLE_NAME=?;
+            WHERE 
+                USER.LOGIN=? 
+            AND USER_RESOURCE.RESOURCE=SUBSTRING(?,1,LENGTH(USER_RESOURCE.RESOURCE)) 
+            AND USER_RESOURCE.ROLE=?;
             """
 
         val statement = dbConnection.prepareStatement(sql)
@@ -29,8 +27,8 @@ class AccessDAO(private val dbConnection: Connection) {
             value.next() -> Access(
                     id = value.getInt("ID"),
                     userId = value.getInt("USER_ID"),
-                    resourceId = value.getInt("RESOURCE_ID"),
-                    roleId = value.getInt("ROLE_ID")
+                    resource = value.getString("RESOURCE"),
+                    role = value.getString("ROLE")
             )
             else -> null
         }
