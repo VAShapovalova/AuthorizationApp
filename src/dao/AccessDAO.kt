@@ -23,7 +23,7 @@ class AccessDAO(private val dbConnection: Connection) {
         statement.setString(3, role)
         val value = statement.executeQuery()
 
-        return when {
+        val access = when {
             value.next() -> Access(
                     id = value.getInt("ID"),
                     userId = value.getInt("USER_ID"),
@@ -32,5 +32,8 @@ class AccessDAO(private val dbConnection: Connection) {
             )
             else -> null
         }
+        statement.close()
+        value.close()
+        return access
     }
 }
