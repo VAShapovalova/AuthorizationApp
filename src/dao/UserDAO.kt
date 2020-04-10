@@ -9,13 +9,12 @@ class UserDAO(private val dbConnection: Connection) {
             SELECT *
             FROM USER
             WHERE LOGIN=?;
-            """
+        """
 
         val statement = dbConnection.prepareStatement(sql)
         statement.setString(1, login)
         val value = statement.executeQuery()
-
-        return when {
+        val user =  when {
             value.next() -> User(
                     login = value.getString("LOGIN"),
                     hash = value.getString("HASH_PASSWORD"),
@@ -23,5 +22,8 @@ class UserDAO(private val dbConnection: Connection) {
             )
             else -> null
         }
+        statement.close()
+        value.close()
+        return user
     }
 }

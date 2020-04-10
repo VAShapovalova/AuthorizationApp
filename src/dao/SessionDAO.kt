@@ -20,7 +20,8 @@ class SessionDAO(private val dbConnection: Connection) {
         statement.setDate(3, Date.valueOf(session.de))
         statement.setInt(4, session.vol)
         statement.setString(5, session.resource)
-
-        return statement.executeUpdate()
+        val result = statement.executeUpdate()
+        statement.close()
+        return result
     }
 }
